@@ -18,6 +18,26 @@ user_id = os.environ["USER_ID"]
 template_id = os.environ["TEMPLATE_ID"]
 
 
+
+def get_access_token():
+    # appId
+    #app_id = config["app_id"]
+    # appSecret
+    #app_secret = config["app_secret"]
+    post_url = ("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}"
+                .format(app_id, app_secret))
+    try:
+        access_token = get(post_url).json()['access_token']
+    except KeyError:
+        print("获取access_token失败，请检查app_id和app_secret是否正确")
+        os.system("pause")
+        sys.exit(1)
+    # print(access_token)
+    return access_token
+
+
+
+
 def get_weather():
   headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
