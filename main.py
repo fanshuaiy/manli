@@ -6,19 +6,6 @@ from zhdate import ZhDate
 import sys
 import os
 
-today = datetime.now()
-# start_date = os.environ['START_DATE']
-city = os.environ['CITY']
-birthday = os.environ['BIRTHDAY']
-
-# app_id = os.environ["APP_ID"]
-# app_secret = os.environ["APP_SECRET"]
-
-user_id = os.environ["USER_ID"]
-template_id = os.environ["TEMPLATE_ID"]
-# key=os.environ["KEY"]
-
-
 
 def get_color():
     # 获取随机颜色
@@ -29,9 +16,9 @@ def get_color():
 
 def get_access_token():
     # appId
-    app_id = os.environ["APP_ID"]
+    app_id = config["app_id"]
     # appSecret
-    app_secret = os.environ["APP_SECRET"]
+    app_secret = config["app_secret"]
     post_url = ("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}"
                 .format(app_id, app_secret))
     try:
@@ -49,7 +36,7 @@ def get_weather(region):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
-    key = os.environ["KEY"]
+    key = config["weather_key"]
     region_url = "https://geoapi.qweather.com/v2/city/lookup?location={}&key={}".format(region, key)
     response = get(region_url, headers=headers).json()
     if response["code"] == "404":
@@ -137,9 +124,9 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
     today = datetime.date(datetime(year=year, month=month, day=day))
     week = week_list[today.isoweekday() % 7]
     # 获取在一起的日子的日期格式
-    love_year = int(os.environ['START_DATE'].split("-")[0])
-    love_month = int(os.environ['START_DATE'].split("-")[1])
-    love_day = int(os.environ['START_DATE'].split("-")[2])
+    love_year = int(config["love_date"].split("-")[0])
+    love_month = int(config["love_date"].split("-")[1])
+    love_day = int(config["love_date"].split("-")[2])
     love_date = date(love_year, love_month, love_day)
     # 获取在一起的日期差
     love_days = str(today.__sub__(love_date)).split(" ")[0]
@@ -148,6 +135,7 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
     for k, v in config.items():
         if k[0:5] == "birth":
             birthdays[k] = v
+    print(type(birthdays))
     data = {
         "touser": to_user,
         "template_id": config["template_id"],
